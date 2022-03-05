@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Checker</title>
+    <script src="./index.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Price Checker</h2>
+    <div>
+        <p>Show price here...</p>
+    </div>
+</body>
+<script>
+
+    priceAutoChecker();
+
+async function priceAutoChecker(){
+    console.log("test");
+    const browser = await puppeteer.launch( {headless: false});
+    const page = await browser.newPage();
+    await page.goto( "https://www.amazon.com/ELEGOO-Project-Tutorial-Controller-Projects/dp/B01D8KOZF4/ref=sr_1_4?keywords=arduino+starter+kit&qid=1642138018&sprefix=ardu%2Caps%2C73&sr=8-4");
+    const [el] = await page.$x('/html/body/div[1]/div[2]/div[6]/div[3]/div[1]/div[4]/div/div/div/div/form/div/div/div/div/div[2]/div[1]/div/span/span[2]/span[2]');
+    if (el == null){
+        //browser.close();--
+        console.log("i think we broke it")
+        return; 
+    }
+    const live = await el.getProperty('textContent');
+    const priceTwo = await live.jsonValue();
+    console.log(priceTwo); 
+    if (priceTwo >= "39.99"){
+        console.log("True!")
+        //client.channels.cache.get(channelRocketLeague).send("Its live! ");
+        browser.close();
+    } else {
+        console.log("Broken")
+        console.log(priceTwo)
+        browser.close();
+    }
+    browser.close();
+}
+</script>
+</html>
